@@ -120,4 +120,76 @@ public class ProductService {
          */
         return productRepository.save(product);
     }
+
+    /*
+     * Deletes a product from the database using its ID.
+     *
+     * Parameter:
+     * id - The primary key of the product to be deleted.
+     *
+     * Flow:
+     * Controller
+     * ↓
+     * ProductService
+     * ↓
+     * ProductRepository.deleteById(id)
+     * ↓
+     * Database
+     */
+    public void deleteProduct(Long id) {
+
+        /*
+         * deleteById()
+         *
+         * This is a built-in JpaRepository method.
+         *
+         * SQL executed:
+         * DELETE FROM products WHERE id = ?;
+         *
+         * If the product exists:
+         * It is deleted.
+         *
+         * If the product does not exist:
+         * Spring may throw an EmptyResultDataAccessException.
+         */
+        productRepository.deleteById(id);
+    }
+
+    /*
+     * Returns all products belonging to a specific category.
+     *
+     * Parameter:
+     * category - The category name to search for.
+     *
+     * Example:
+     * category = "Electronics"
+     *
+     * Returns:
+     * List<Product>
+     */
+    public List<Product> getProductsByCategory(String category) {
+
+        /*
+         * findByCategory()
+         *
+         * This is a custom repository method.
+         *
+         * Spring Data JPA automatically generates the query
+         * based on the method name.
+         *
+         * Method:
+         * findByCategory(String category)
+         *
+         * Generated SQL:
+         * SELECT * FROM products
+         * WHERE category = ?;
+         *
+         * Example:
+         * category = "Electronics"
+         *
+         * Returns all products whose category is
+         * "Electronics".
+         */
+        return productRepository.findByCategory(category);
+    }
 }

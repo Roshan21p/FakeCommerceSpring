@@ -112,7 +112,7 @@ public class CreateProductRequestDto {
      * Example:
      * "Electronics"
      */
-    private String category;
+    private Long categoryId;
 
     /*
      * Product rating.

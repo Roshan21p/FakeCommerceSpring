@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.FakeCommerce.dtos.CreateProductRequestDto;
+import com.example.FakeCommerce.dtos.GetProductResponseDto;
+import com.example.FakeCommerce.dtos.GetProductWithDetailsResponseDto;
 import com.example.FakeCommerce.schema.Product;
 import com.example.FakeCommerce.services.ProductService;
 
@@ -93,11 +95,76 @@ public class ProductController {
      * productService.getAllProducts()
      *
      * Returns:
-     * List<Product> as JSON.
+     * List<GetProductResponseDto> as JSON.
      */
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<GetProductResponseDto> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    /*
+     * @GetMapping("/{id}/details")
+     *
+     * Handles HTTP GET requests.
+     *
+     * URL:
+     * GET /api/v1/products/1/details
+     *
+     * {id} is a Path Variable.
+     *
+     * Example:
+     * GET /api/v1/products/5/details
+     *
+     * Here,
+     * id = 5
+     *
+     * Calls:
+     * productService.getProductWithDetails(id)
+     *
+     * Returns:
+     * GetProductWithDetailsResponseDto as JSON.
+     *
+     * This endpoint returns complete product details,
+     * including additional information such as category,
+     * rating, description, etc.
+     */
+    @GetMapping("/{id}/details")
+    public GetProductWithDetailsResponseDto getProductWithDetails(
+            @PathVariable Long id) {
+
+        return productService.getProductWithDetails(id);
+    }
+
+    /*
+     * @GetMapping("/{id}")
+     *
+     * Handles HTTP GET requests.
+     *
+     * URL:
+     * GET /api/v1/products/1
+     *
+     * {id} is a Path Variable.
+     *
+     * Example:
+     * GET /api/v1/products/10
+     *
+     * Here,
+     * id = 10
+     *
+     * Calls:
+     * productService.getProductById(id)
+     *
+     * Returns:
+     * GetProductResponseDto as JSON.
+     *
+     * This endpoint returns basic product information
+     * for the specified product ID.
+     */
+    @GetMapping("/{id}")
+    public GetProductResponseDto getProductById(
+            @PathVariable Long id) {
+
+        return productService.getProductById(id);
     }
 
     /*
@@ -223,5 +290,11 @@ public class ProductController {
         return productService.getProductsByCategory(category);
     }
 
-    // Write an api to get all the unique categories from the products table. The api should be a get api and the url should be /api/v1/products/categories. The response should be a list of strings containing the unique categories.
+    // Write an api to get all the unique categories from the products table. The
+    // api should be a get api and the url should be /api/v1/products/categories.
+    // The response should be a list of strings containing the unique categories.
+    @GetMapping("/categories")
+    public List<String> getAllCategories() {
+        return productService.getAllCategories();
+    }
 }

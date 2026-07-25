@@ -1,5 +1,8 @@
 package com.example.FakeCommerce.schema;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -16,6 +19,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "order_products")
+@SQLDelete(sql = "UPDATE order_products SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class OrderProducts extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -3,6 +3,7 @@ package com.example.FakeCommerce.schema;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -31,6 +32,7 @@ public class OrderProducts extends BaseEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
 }

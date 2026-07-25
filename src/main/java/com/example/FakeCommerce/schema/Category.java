@@ -3,6 +3,7 @@ package com.example.FakeCommerce.schema;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -87,5 +88,6 @@ public class Category extends BaseEntity {
      * Furniture
      * Books
      */
+    @Column(nullable = false)
     private String name;
 }

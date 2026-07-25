@@ -30,6 +30,15 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// Flyway core and flyway-mysql dependencies for database migrations
+	// implementation 'org.flywaydb:flyway-core:11.5.0'
+	// implementation 'org.flywaydb:flyway-mysql:11.5.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-flyway' // dep changed from flyway-core
+	implementation 'org.flywaydb:flyway-mysql'
+
+	
 }
 
 tasks.named('test') {

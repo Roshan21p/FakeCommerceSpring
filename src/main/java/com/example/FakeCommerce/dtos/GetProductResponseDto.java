@@ -101,7 +101,7 @@ public class GetProductResponseDto {
      * 3.8
      * 5.0
      */
-    private String rating;
+    private BigDecimal rating;
 
     /*
      * Product price.

@@ -125,5 +125,5 @@ public class CreateProductRequestDto {
      * averages, filtering), consider using
      * BigDecimal or Double instead of String.
      */
-    private String rating;
+    private BigDecimal rating;
 }

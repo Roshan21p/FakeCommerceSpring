@@ -174,5 +174,5 @@ public class Product extends BaseEntity {
      * 3.9
      * 5.0
      */
-    private String rating;
+    private BigDecimal rating;
 }

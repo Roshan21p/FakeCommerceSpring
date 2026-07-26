@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import com.example.FakeCommerce.dtos.CreateProductRequestDto;
 import com.example.FakeCommerce.dtos.GetProductResponseDto;
 import com.example.FakeCommerce.dtos.GetProductWithDetailsResponseDto;
+import com.example.FakeCommerce.exceptions.ResourceNotFoundException;
 import com.example.FakeCommerce.repositories.CategoryRepository;
 import com.example.FakeCommerce.repositories.ProductRepository;
 import com.example.FakeCommerce.schema.Category;
@@ -451,7 +452,14 @@ public class ProductService {
          *
          * Product
          */
-        Product product = productRepository.findProductWithDetailsById(id).get(0);
+        
+        List<Product> products = productRepository.findProductWithDetailsById(id);
+
+        if (products.isEmpty()) {
+            throw new ResourceNotFoundException("Product not found with id: " + id);
+        }
+
+        Product product = products.get(0);
 
         /*
          * Builder Pattern
@@ -597,7 +605,7 @@ public class ProductService {
                  *
                  * "Product not found."
                  */
-                .orElseThrow(() -> new RuntimeException("Product not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id ));
     }
 
     /*
@@ -801,7 +809,9 @@ public class ProductService {
          * If the product does not exist:
          * Spring may throw an EmptyResultDataAccessException.
          */
-        productRepository.deleteById(id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+        productRepository.delete(product);
     }
 
     /*
@@ -827,6 +837,10 @@ public class ProductService {
     public List<Product> getProductsByCategory(String categoryName) {
 
         Category category = categoryRepository.findByName(categoryName);
+
+        if(category == null) {
+            throw new ResourceNotFoundException("Category not found with name: " + categoryName);
+        }
 
         /*
          * findByCategory()

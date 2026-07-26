@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.FakeCommerce.dtos.CreateCategoryRequestDto;
+import com.example.FakeCommerce.exceptions.ResourceNotFoundException;
 import com.example.FakeCommerce.repositories.CategoryRepository;
 import com.example.FakeCommerce.schema.Category;
 
@@ -153,7 +154,7 @@ public class CategoryService {
          * Throw Exception.
          */
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
     }
 
     /*

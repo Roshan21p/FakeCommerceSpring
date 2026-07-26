@@ -2,6 +2,8 @@ package com.example.FakeCommerce.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,28 +71,11 @@ public class CategoryController {
      * Creates a new Category.
      */
     @PostMapping
-    public Category createCategory(
+    public ResponseEntity<Category> createCategory( @RequestBody CreateCategoryRequestDto requestDto) {
 
-            /*
-             * @RequestBody
-             *
-             * Converts incoming JSON
-             * into CreateCategoryRequestDto.
-             *
-             * Example Request:
-             *
-             * {
-             * "name":"Electronics"
-             * }
-             */
-            @RequestBody CreateCategoryRequestDto requestDto) {
-
-        /*
-         * Calls the Service Layer
-         * to create and save
-         * the Category.
-         */
-        return categoryService.createCategory(requestDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(categoryService.createCategory(requestDto));
     }
 
     /*

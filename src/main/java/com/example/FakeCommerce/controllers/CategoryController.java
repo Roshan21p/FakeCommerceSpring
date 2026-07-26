@@ -73,7 +73,7 @@ public class CategoryController {
      */
     // ResponseEntity is used to customize the HTTP response.
     @PostMapping
-    public ResponseEntity<ApiResponse<Category>> createCategory( @RequestBody CreateCategoryRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<Category>> createCategory(@RequestBody CreateCategoryRequestDto requestDto) {
 
         Category category = categoryService.createCategory(requestDto);
         return ResponseEntity
@@ -92,9 +92,11 @@ public class CategoryController {
      * Returns all categories.
      */
     @GetMapping
-    public List<Category> getAllCategories() {
-
-        return categoryService.getAllCategories();
+    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories() {
+        List<Category> categories = categoryService.getAllCategories();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Categories fetched successfully", categories));
     }
 
     /*
@@ -108,7 +110,7 @@ public class CategoryController {
      * GET /api/v1/categories/1
      */
     @GetMapping("/{id}")
-    public Category getCategoryById(
+    public  ResponseEntity<ApiResponse<Category>> getCategoryById(
 
             /*
              * @PathVariable
@@ -125,7 +127,10 @@ public class CategoryController {
              */
             @PathVariable Long id) {
 
-        return categoryService.getCategoryById(id);
+        Category category = categoryService.getCategoryById(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Category fetched successfully", category));
     }
 
     /*
@@ -141,7 +146,7 @@ public class CategoryController {
      * having the given ID.
      */
     @DeleteMapping("/{id}")
-    public void deleteCategory(
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(
 
             /*
              * Reads ID from
@@ -150,5 +155,8 @@ public class CategoryController {
             @PathVariable Long id) {
 
         categoryService.deleteCategory(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .body(ApiResponse.success("Category deleted successfully", null));
     }
 }

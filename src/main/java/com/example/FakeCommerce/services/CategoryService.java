@@ -182,7 +182,9 @@ public class CategoryService {
          * Deletes the record
          * having the given ID.
          */
-        categoryRepository.deleteById(id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
+        categoryRepository.delete(category);
     }
 
 }

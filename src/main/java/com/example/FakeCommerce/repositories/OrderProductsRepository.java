@@ -11,4 +11,6 @@ import com.example.FakeCommerce.schema.OrderProducts;
 public interface OrderProductsRepository extends JpaRepository<OrderProducts, Long> {
     
     List<OrderProducts> findByOrderId(Long orderId);
+
+    List<OrderProducts> findByOrderIdAndProductId(Long orderId, Long productId);
 }

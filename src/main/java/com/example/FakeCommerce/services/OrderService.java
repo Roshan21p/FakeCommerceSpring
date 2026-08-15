@@ -1,5 +1,6 @@
 package com.example.FakeCommerce.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 import com.example.FakeCommerce.adapters.OrderAdapter;
 import com.example.FakeCommerce.dtos.CreateOrderRequestDto;
 import com.example.FakeCommerce.dtos.GetOrderResponseDto;
+import com.example.FakeCommerce.dtos.GetOrderSummaryResponseDto;
 import com.example.FakeCommerce.dtos.OrderItemActionDto;
+import com.example.FakeCommerce.dtos.OrderItemResponseDto;
 import com.example.FakeCommerce.dtos.UpdateOrderRequestDto;
 import com.example.FakeCommerce.exceptions.ResourceNotFoundException;
 import com.example.FakeCommerce.repositories.OrderProductsRepository;
@@ -22,6 +25,7 @@ import com.example.FakeCommerce.schema.OrderProducts;
 import com.example.FakeCommerce.schema.OrderStatus;
 import com.example.FakeCommerce.schema.Product;
 
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -125,7 +129,7 @@ public class OrderService {
             List<OrderProducts> toSave = new ArrayList<>();
             List<OrderProducts> toDelete = new ArrayList<>();
 
-            Map<Long, OrderProducts> existingItems = orderProductsRepository.findByOrderId(id).stream()
+            Map<Long, OrderProducts> existingItems = orderProductsRepository.findByOrderWithProduct(order).stream()
                     .collect(Collectors.toMap(op -> op.getProduct().getId(), Function.identity()));
 
             
@@ -149,34 +153,76 @@ public class OrderService {
                             toSave.add(newItem);
                         }
                     }
-                    case REMOVE -> {
+                   case REMOVE -> {
                         if(existingItem == null) {
-                            throw new ResourceNotFoundException("Order item not found for product id: " + product.getId());
+                            throw new ResourceNotFoundException("Product not found with id: " + product.getId());
                         }
+                        toDelete.add(existingItem);
+                        existingItems.remove(product.getId());
+                    }
 
-                        if(existingItem.getQuantity() <= 1){
+                     case INCREMENT -> {
+                        if(existingItem == null) {
+                            throw new ResourceNotFoundException("Product not found with id: " + product.getId());
+                        }
+                        existingItem.setQuantity(existingItem.getQuantity() + 1);
+                        toSave.add(existingItem);
+
+                    }
+                    case DECREMENT -> {
+                        if(existingItem == null) {
+                            throw new ResourceNotFoundException("Product not found with id: " + product.getId());
+                        }
+                        if(existingItem.getQuantity() <= 1) {
                             toDelete.add(existingItem);
                             existingItems.remove(product.getId());
                         } else {
                             existingItem.setQuantity(existingItem.getQuantity() - 1);
                             toSave.add(existingItem);
                         }
-
-                    } 
+   
+                    }
+    
                 }
 
-                if(!toSave.isEmpty()) {
+            }
+            if(!toSave.isEmpty()) {
                     orderProductsRepository.saveAll(toSave);
                 }
 
                 if(!toDelete.isEmpty()) {
                     orderProductsRepository.deleteAll(toDelete);
                 }
-            }
 
         }
      return orderAdapter.mapToGetOrderResponseDto(order);
 
+    }
+
+    public GetOrderSummaryResponseDto getOrderSummary(Long id) {
+        
+        Order order = orderRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+
+        List<OrderProducts> orderProducts = orderProductsRepository.findByOrderWithProduct(order);
+
+        List<OrderItemResponseDto> orderItemResponseDtos = orderAdapter.mapToOrderItemResponseDto(orderProducts);
+
+        int totalItems = orderProducts.stream().mapToInt(OrderProducts::getQuantity).sum();
+
+        BigDecimal totalPrice = orderProducts.stream().map(op -> op.getProduct().getPrice().multiply(BigDecimal.valueOf(op.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        
+        return GetOrderSummaryResponseDto.builder()
+                .id(order.getId())
+                .status(order.getStatus())
+                .orderItems(orderItemResponseDtos)
+                .totalItems(totalItems)
+                .totalPrice(totalPrice)
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
+                .build();
     }
     // User -> Cart -> Adds an item -> New Order (Pending)
 

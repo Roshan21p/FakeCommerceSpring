@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.FakeCommerce.adapters.OrderAdapter;
 import com.example.FakeCommerce.dtos.CreateOrderRequestDto;
@@ -58,6 +59,7 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
+    @Transactional
     public GetOrderResponseDto createOrder(CreateOrderRequestDto createOrderRequestDto) {
 
         // Check if there is an existing pending order for the user
@@ -101,6 +103,7 @@ public class OrderService {
         return orderAdapter.mapToGetOrderResponseDto(order);
     }
 
+    @Transactional
     public GetOrderResponseDto updateOrder(Long id, UpdateOrderRequestDto updateOrderRequestDto) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));

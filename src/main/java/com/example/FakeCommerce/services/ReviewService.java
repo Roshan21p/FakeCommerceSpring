@@ -18,10 +18,12 @@ import com.example.FakeCommerce.schema.Review;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Builder
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -33,10 +35,13 @@ public class ReviewService {
 
        Product product = productRepository.findById(createReviewRequestDto.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id " + createReviewRequestDto.getProductId() + " not found."));
+    
 
         Order order = orderRepository.findById(createReviewRequestDto.getOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + createReviewRequestDto.getOrderId() + " not found."));
 
+        log.info("Order found: {}", order);
+        
         Review review = Review.builder()
                 .product(product)
                 .order(order)

@@ -31,7 +31,6 @@ package com.example.FakeCommerce.services;
  *
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -284,6 +283,15 @@ public class ProductService {
      *
      */
     public List<GetProductResponseDto> getAllProducts() {
+
+        // 1. Check Redis
+        Optional<List<GetProductResponseDto>> cacheProducts = productRedisCache.getAllProducts();
+
+        if(cacheProducts.isPresent()){
+            return cacheProducts.get();
+        }
+
+        // 2. Cache miss -> get from DB
         /*
          * findAll()
          *
@@ -373,7 +381,7 @@ public class ProductService {
          * converts Stream
          * back into List.
          */
-        return products.stream()
+        List<GetProductResponseDto> productDtos =  products.stream()
                 .map(product -> GetProductResponseDto.builder()
                         .id(product.getId())
                         .title(product.getTitle())
@@ -383,6 +391,12 @@ public class ProductService {
                         .price(product.getPrice())
                         .build())
                 .collect(Collectors.toList());
+        
+        // 3. Store the result in Redis
+        productRedisCache.putAllProducts(productDtos);
+
+        // 4. Return the products
+        return productDtos;
     }
 
     /*

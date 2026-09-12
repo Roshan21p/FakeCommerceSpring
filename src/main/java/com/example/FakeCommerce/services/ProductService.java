@@ -33,6 +33,7 @@ package com.example.FakeCommerce.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ import com.example.FakeCommerce.repositories.CategoryRepository;
 import com.example.FakeCommerce.repositories.ProductRepository;
 import com.example.FakeCommerce.schema.Category;
 import com.example.FakeCommerce.schema.Product;
+import com.example.FakeCommerce.services.cache.ProductRedisCache;
 
 import lombok.RequiredArgsConstructor;
 
@@ -243,6 +245,8 @@ public class ProductService {
      * Product
      */
     private final CategoryService categoryService;
+
+    private final ProductRedisCache productRedisCache;
 
     /*
      * ==========================================================
@@ -535,6 +539,12 @@ public class ProductService {
      * GetProductResponseDto
      */
     public GetProductResponseDto getProductById(Long id) {
+
+        Optional<GetProductResponseDto> cacheSummary = productRedisCache.getSummary(id);
+
+        if(cacheSummary.isPresent()) {
+            return cacheSummary.get();
+        }
         /*
          * findById()
          *
@@ -555,7 +565,7 @@ public class ProductService {
          * Product may or may not exist.
          */
 
-        return productRepository.findById(id)
+        GetProductResponseDto response =  productRepository.findById(id)
                 /*
                  * Optional.map()
                  *
@@ -606,6 +616,9 @@ public class ProductService {
                  * "Product not found."
                  */
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id ));
+        
+        productRedisCache.putSummary(id, response);
+        return response;
     }
 
     /*

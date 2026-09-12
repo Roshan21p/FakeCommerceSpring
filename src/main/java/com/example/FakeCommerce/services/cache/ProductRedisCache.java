@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.example.FakeCommerce.dtos.GetProductResponseDto;
+import com.example.FakeCommerce.dtos.GetProductWithDetailsResponseDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import tools.jackson.databind.ObjectMapper;
 public class ProductRedisCache {
 
     private static final String KEY_SUMMARY = "product:summary:";
+
+    private static final String KEY_WITH_DETAILS = "product:with_details:";
 
     private static final String KEY_ALL_PRODUCTS = "product:all";
 
@@ -91,6 +94,33 @@ public class ProductRedisCache {
         } catch (Exception e) {
             log.error(  "Error serializing all products to Redis: {}",
                     e.getMessage());
+        }
+    }
+
+    public Optional<GetProductWithDetailsResponseDto> getProductWithDetails(Long id) {
+
+        String responseJson = stringRedisTemplate.opsForValue().get(KEY_WITH_DETAILS + id);
+        if(responseJson == null) {
+            log.info("Cache miss for product with details id: {}", id);
+            return Optional.empty();
+        }
+
+        try {
+            GetProductWithDetailsResponseDto responseDto = objectMapper.readValue(responseJson, GetProductWithDetailsResponseDto.class);
+            log.info("Cache hit for product with details id: {}", id);
+            return Optional.of(responseDto);
+        } catch (Exception e) {
+            log.error("Error deserializing product with details from Redis for id {}: {}", id, e.getMessage());
+            stringRedisTemplate.delete(KEY_WITH_DETAILS + id); // Remove the corrupted cache entry
+            return Optional.empty();
+        }
+    }
+
+    public void putProductWithDetails(Long id, GetProductWithDetailsResponseDto response) {
+        try {
+            stringRedisTemplate.opsForValue().set(KEY_WITH_DETAILS + id, objectMapper.writeValueAsString(response), CACHE_TTL);
+        } catch (Exception e) {
+            log.error("Error serializing product with details to Redis for id {}: {}", id, e.getMessage());
         }
     }
 }

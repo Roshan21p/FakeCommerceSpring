@@ -136,7 +136,7 @@ public class ProductController {
      */
     @GetMapping("/{id}/details")
     public ResponseEntity<ApiResponse<GetProductWithDetailsResponseDto>> getProductWithDetails(
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
 
         GetProductWithDetailsResponseDto productDetails = productService.getProductWithDetails(id);
         return ResponseEntity
@@ -171,7 +171,7 @@ public class ProductController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<GetProductResponseDto>> getProductById(
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
 
         GetProductResponseDto product = productService.getProductById(id);
         return ResponseEntity
@@ -251,7 +251,7 @@ public class ProductController {
              * Here,
              * id = 10
              */
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
 
         // Calls the service layer to delete the product.
         productService.deleteProduct(id);

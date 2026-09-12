@@ -43,7 +43,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<GetReviewResponseDto>> getReviewById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<GetReviewResponseDto>> getReviewById(@PathVariable("id") Long id) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -51,7 +51,7 @@ public class ReviewController {
     }
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<ApiResponse<List<GetReviewResponseDto>>> getReviewsByProductId(@PathVariable Long productId) {
+    public ResponseEntity<ApiResponse<List<GetReviewResponseDto>>> getReviewsByProductId(@PathVariable("productId") Long productId) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -59,7 +59,7 @@ public class ReviewController {
     }
 
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<ApiResponse<List<GetReviewResponseDto>>> getReviewsByOrderId(@PathVariable Long orderId) {
+    public ResponseEntity<ApiResponse<List<GetReviewResponseDto>>> getReviewsByOrderId(@PathVariable("orderId") Long orderId) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -67,7 +67,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable("id") Long id) {
         reviewService.deleteReview(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

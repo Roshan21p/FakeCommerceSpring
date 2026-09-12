@@ -47,7 +47,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<GetOrderResponseDto>> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<GetOrderResponseDto>> getOrderById(@PathVariable("id") Long id) {
         GetOrderResponseDto order = orderService.getOrderById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -55,7 +55,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable("id") Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -64,7 +64,7 @@ public class OrderController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<GetOrderResponseDto>> updateOrder(@PathVariable Long id, @RequestBody UpdateOrderRequestDto updateOrderRequestDto) {
+    public ResponseEntity<ApiResponse<GetOrderResponseDto>> updateOrder(@PathVariable("id") Long id, @RequestBody UpdateOrderRequestDto updateOrderRequestDto) {
         GetOrderResponseDto updatedOrder = orderService.updateOrder(id, updateOrderRequestDto);
         
         return ResponseEntity
@@ -73,7 +73,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}/summary")
-    public ResponseEntity<ApiResponse<GetOrderSummaryResponseDto>> getOrderSummary(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<GetOrderSummaryResponseDto>> getOrderSummary(@PathVariable("id") Long id) {
         GetOrderSummaryResponseDto orderSummary = orderService.getOrderSummary(id);
         return ResponseEntity
                 .status(HttpStatus.OK)

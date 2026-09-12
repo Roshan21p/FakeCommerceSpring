@@ -442,6 +442,15 @@ public class ProductService {
      */
     public GetProductWithDetailsResponseDto getProductWithDetails(Long id) {
 
+        // 1. Check Redis Cache
+        Optional<GetProductWithDetailsResponseDto> cacheDetails = productRedisCache.getProductWithDetails(id);
+
+        if(cacheDetails.isPresent()) {
+            return cacheDetails.get();
+        }
+
+        // 2. If not in cache, fetch from database
+
         /*
          * findProductWithDetailsById(id)
          *
@@ -496,7 +505,7 @@ public class ProductService {
          *
          * DTO contains only the required data.
          */
-        return GetProductWithDetailsResponseDto.builder()
+        GetProductWithDetailsResponseDto response = GetProductWithDetailsResponseDto.builder()
                 .id(product.getId())
                 .title(product.getTitle())
                 .description(product.getDescription())
@@ -532,6 +541,8 @@ public class ProductService {
                  */
                 .category(product.getCategory().getName())
                 .build();
+        productRedisCache.putProductWithDetails(id, response);
+        return response;
     }
 
     /*

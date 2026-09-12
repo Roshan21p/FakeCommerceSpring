@@ -125,7 +125,7 @@ public class CategoryController {
              *
              * id = 5
              */
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
 
         Category category = categoryService.getCategoryById(id);
         return ResponseEntity
@@ -152,7 +152,7 @@ public class CategoryController {
              * Reads ID from
              * the URL path.
              */
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
 
         categoryService.deleteCategory(id);
         return ResponseEntity

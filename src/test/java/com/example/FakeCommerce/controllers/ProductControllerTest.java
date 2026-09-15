@@ -27,11 +27,13 @@ import com.example.FakeCommerce.services.ProductService;
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
 
-    // Spring injects MockMvc, which sends requests without starting a real web server.
+    // Spring injects MockMvc, which sends requests without starting a real web
+    // server.
     @Autowired
     private MockMvc mockMvc;
 
-    // Replaces ProductService with a Mockito mock so controller behavior is isolated.
+    // Replaces ProductService with a Mockito mock so controller behavior is
+    // isolated.
     @MockitoBean
     private ProductService productService;
 

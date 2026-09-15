@@ -3,6 +3,7 @@ package com.example.FakeCommerce.dtos;
 import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -69,6 +70,8 @@ import lombok.NoArgsConstructor;
  * into this DTO object.
  */
 @NoArgsConstructor
+
+@Builder 
 public class CreateProductRequestDto {
 
     /*

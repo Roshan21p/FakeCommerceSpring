@@ -25,11 +25,13 @@ import com.example.FakeCommerce.services.ReviewService;
 @WebMvcTest(ReviewController.class)
 class ReviewControllerTest {
 
-    // Spring injects MockMvc so requests can be tested without a running web server.
+    // Spring injects MockMvc so requests can be tested without a running web
+    // server.
     @Autowired
     private MockMvc mockMvc;
 
-    // Registers a Mockito service bean so no real database or service logic is used.
+    // Registers a Mockito service bean so no real database or service logic is
+    // used.
     @MockitoBean
     private ReviewService reviewService;
 

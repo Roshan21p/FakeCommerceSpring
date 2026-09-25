@@ -10,7 +10,10 @@ import com.example.FakeCommerce.repositories.CategoryRepository;
 import com.example.FakeCommerce.schema.Category;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 /*
  * @Service
  *
@@ -113,7 +116,8 @@ public class CategoryService {
      * FROM categories;
      */
     public List<Category> getAllCategories() {
-
+        // Record category-list requests so service activity can be traced in application logs.
+        log.warn("getAllCategories method called");
         /*
          * findAll()
          *
@@ -139,6 +143,8 @@ public class CategoryService {
      * GET /categories/1
      */
     public Category getCategoryById(Long id) {
+        // Include the requested identifier to make single-category lookups traceable during debugging.
+        log.info("getCategoryById method called with id {}", id);
 
         /*
          * findById()

@@ -1,23 +1,27 @@
 spring:
   application:
     name: FakeCommerce
+  # MySQL connection used by the running application.
   datasource:
     url: jdbc:mysql://localhost:3306/fakecommerce
     username: root
     password: root123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    # Print generated SQL and validate the schema against the entity mappings.
     show-sql: true
     hibernate:
       ddl-auto: validate
   flyway:
+    # Apply database migrations from the classpath before the application starts.
     enabled: true
-    locations: classpath:db/migration 
-    
-# logging:
-#   level:
-#     org.flywaydb: DEBUG
+    locations: classpath:db/migration
+
+  # logging:
+  #   level:
+  #     org.flywaydb: DEBUG
 
   redis:
+    # Local Redis instance used for application caching or other fast key-value data.
     host: localhost
     port: 6379

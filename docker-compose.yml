@@ -1,0 +1,71 @@
+version: '3.8'
+
+# Local observability stack used to receive, index, and browse application logs.
+services:
+  # Stores structured application logs and provides search and indexing.
+  elasticsearch:
+    image: elasticsearch:8.17.1
+    container_name: elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    environment:
+      # Run one Elasticsearch node locally without cluster discovery or security setup.
+      - discovery.type=single-node
+      # Limit the JVM heap so the local development machine does not use excessive memory.
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      # Disable authentication for this local-only development stack.
+      - xpack.security.enabled=false
+      # Allow Elasticsearch monitoring data to be collected.
+      - xpack.monitoring.collection.enabled=true
+    networks:
+      - elk-network
+  
+  # Web interface for searching and visualizing data stored in Elasticsearch.
+  kibana:
+    image: kibana:8.17.1
+    container_name: kibana
+    restart: always
+    ports:
+      - "5601:5601"
+    environment:
+      # Connect Kibana to the Elasticsearch service by its Compose service name.
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk-network
+  
+  # Receives JSON logs from the application and forwards them to Elasticsearch.
+  logstash:
+    image: logstash:8.17.1
+    container_name: logstash
+    restart: always
+    ports:
+      # Logback sends TCP log events to this port.
+      - "5044:5044"
+    environment:
+      # Collect Logstash monitoring data and cap its local JVM heap.
+      - xpack.monitoring.collection.enabled=true
+      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+    depends_on:
+      # Start Elasticsearch before Logstash attempts to publish events.
+      - elasticsearch
+    networks:
+      - elk-network
+    volumes:
+      # Mount the pipeline configuration from the host into the container.
+      - ./logstash/:/logstash_dir
+    # Run the project-specific pipeline instead of Logstash's default configuration.
+    command: logstash -f /logstash_dir/pipeline/logstash.conf
+  
+# Shared bridge network lets the services resolve each other by service name.
+networks:
+  elk-network:
+    driver: bridge
+  
+volumes:
+  # Persist indexed logs when the Elasticsearch container is recreated.
+  elasticsearch_data: {}

@@ -2,6 +2,18 @@ version: '3.8'
 
 # Local observability stack used to receive, index, and browse application logs.
 services:
+  grafana-lgtm:
+    # Bundles Grafana, Loki, Grafana Tempo, and an OpenTelemetry Collector for local observability.
+    image: 'grafana/otel-lgtm:latest'
+    restart: always
+    # Provides stable local container naming for Docker Compose commands and troubleshooting.
+    container_name: grafana/otel-lgtm
+    ports:
+      - "3000:3000" # Grafana dashboard.
+      - "9000:9090" # Prometheus-compatible metrics endpoint.
+      - "4317:4317" # OTLP over gRPC.
+      - "4318:4318" # OTLP over HTTP for metrics, logs, and traces.
+    
   # Stores structured application logs and provides search and indexing.
   elasticsearch:
     image: elasticsearch:8.17.1

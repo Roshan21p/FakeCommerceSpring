@@ -42,6 +42,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'redis.clients:jedis:7.2.0'	
 	implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
+	// Adds health checks, metrics, and tracing integration through Spring Boot Actuator.
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	// Bridges Spring Boot observations to the OpenTelemetry SDK and OTLP exporters.
+	implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
+	// Registers the Prometheus meter registry used by the /actuator/prometheus endpoint.
+	implementation 'io.micrometer:micrometer-registry-prometheus:1.17.0-M3'
+	// Sends Logback events to the OpenTelemetry Collector with trace correlation metadata.
+	implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.21.0-alpha'
+	// Keeps the Prometheus registry available at runtime when the application is packaged.
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus:1.17.0-M3'
+
 }
 
 tasks.named('test') {

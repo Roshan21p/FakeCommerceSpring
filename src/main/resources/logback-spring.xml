@@ -1,4 +1,7 @@
 <configuration>
+    <!-- Loads Spring Boot's standard console and logging conversion properties. -->
+     <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>localhost:5044</destination> <!-- Send logs to Logstash -->
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
@@ -10,8 +13,16 @@
         </encoder>
     </appender>
 
+    <!-- Sends structured Logback events to the OpenTelemetry appender for collector export. -->
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+        <captureExperimentalAttributes>true</captureExperimentalAttributes>
+        <captureKeyValuePairAttributes>true</captureKeyValuePairAttributes>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="LOGSTASH" />
         <appender-ref ref="CONSOLE" />
+        <!-- Attach OTEL export alongside the existing console and Logstash outputs. -->
+        <appender-ref ref="OTEL" />
     </root>
 </configuration>
